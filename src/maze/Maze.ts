@@ -1,5 +1,6 @@
 import {
   Game,
+  Group,
 } from '../engine';
 
 import { Obstacle } from './Obstacle';
@@ -41,7 +42,7 @@ export class Maze {
       new Obstacle(graphics, 600, this.config.height - 400, 10, 400, 'obstacle2'),
     ];
 
-    const obstaclesGroup = new Game.Group('Obstacles');
+    const obstaclesGroup = new Group('Obstacles');
 
     const mazer = new Mazer(graphics, keyboard, 140, 50, 'mazer1');
 

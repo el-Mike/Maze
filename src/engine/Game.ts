@@ -9,16 +9,7 @@ import {
 
 import { Viewport } from './Viewport';
 
-import {
-  GameObject,
-  Group,
-} from './GameObject';
-
 import { State } from './State';
-
-import {
-  Rectangle
-} from './Geom';
 
 import {
   Graphics,
@@ -33,14 +24,6 @@ import {
 } from './Loop';
 
 export class Game {
-  // static imports
-  static GameObject = GameObject;
-  static Group = Group;
-
-  static Rectangle = Rectangle;
-
-  static Graphics = Graphics;
-
   // DOM related properties
   private gameContainer: HTMLElement;
 
@@ -57,7 +40,6 @@ export class Game {
   constructor(
     gameConfig: IGameConfig,
     private documentRef: HTMLDocument = document,
-    private windowRef: Window = window,
   ) {
     if (!gameConfig.parentElement) {
       throw new Error(PARENT_ELEMENT_NOT_DEFINED);
@@ -95,11 +77,7 @@ export class Game {
   }
 
   private update() {
-    this.state.getGameObjects().forEach(object => {
-      if (object.updateable) {
-        object.update();
-      }
-    })
+    this.state.getUpdateable().forEach(object => object.update());
   }
 
   private renderFrame() {

@@ -32,6 +32,10 @@ export class State {
     return this.gameObjects;
   }
 
+  public getUpdateable() {
+    return this.gameObjects.filter(object => object.updateable);
+  }
+
   public addGameObjects(...objects: GameObject[]) {
     this.gameObjects.push(...objects);
   }
