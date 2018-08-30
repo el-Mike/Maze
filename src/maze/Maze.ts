@@ -1,6 +1,7 @@
 import {
   Game,
   Group,
+  PhysicalObject,
 } from '../engine';
 
 import { Obstacle } from './Obstacle';
@@ -44,13 +45,17 @@ export class Maze {
 
     const obstaclesGroup = new Group('Obstacles');
 
-    const mazer = new Mazer(graphics, keyboard, 140, 50, 'mazer1');
+    const mazerObject = new PhysicalObject('mazer1');
+    mazerObject.setPosition(140, 50);
+    
+    const mazer = new Mazer(graphics, keyboard, mazerObject);
+    mazerObject.setBody(mazer);
 
     obstaclesGroup.add(...obstacles);
 
     state.addGameObjects(
       obstaclesGroup,
-      mazer
+      mazerObject,
     );
 
     this.game.start();

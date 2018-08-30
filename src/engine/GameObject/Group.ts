@@ -1,6 +1,7 @@
 import { GameObject } from './GameObject';
 
 export class Group extends GameObject {
+
   private _objects: GameObject[] = [];
 
   constructor(name: string) {
@@ -15,8 +16,8 @@ export class Group extends GameObject {
     this.objects.forEach(object => object.update());
   }
 
-  public render(context: CanvasRenderingContext2D) {
-    this.objects.forEach(object => object.render(context));
+  public render() {
+    this.objects.forEach(object => object.render());
   }
 
   get objects() {

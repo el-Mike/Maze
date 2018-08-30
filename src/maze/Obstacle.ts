@@ -9,14 +9,15 @@ export class Obstacle extends GameObject {
 
   constructor(
     private graphics: Graphics,
-    private x: number,
-    private y: number,
+    x: number,
+    y: number,
     private width: number,
     private height: number,
     name: string,
   ) {
     super(name);
 
+    this.setPosition(x, y);
     this.updateable = false;
   }
 

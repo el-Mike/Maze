@@ -102,7 +102,7 @@ export class Game {
 
   private renderObjects(context: CanvasRenderingContext2D) {
     // rendering game objects
-    this.state.getGameObjects().forEach(object => object.render(context));
+    this.state.getGameObjects().forEach(object => object.render());
   }
 
   public getState() {
