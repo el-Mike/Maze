@@ -1,8 +1,10 @@
-import { isDefined } from '../utils';
+import { Vector2 } from '@engine/Math';
+import { CanvasRenderer } from '@engine/Renderer';
 
 export abstract class GameObject {
-  private _x: number;
-  private _y: number;
+  private _position: Vector2;
+  private _width: number;
+  private _height: number;
   private _updateable = true;
   private _name: string;
 
@@ -11,27 +13,42 @@ export abstract class GameObject {
   }
 
   public abstract update(): void;
-  public abstract render(): void;
+  public abstract canvasRender(renderer: CanvasRenderer): void;
 
   public setPosition(x: number, y: number) {
-    this._x = isDefined(x) ? x : 0;
-    this._y = isDefined(y) ? y : this._x;
+    this._position = new Vector2(x, y);
   }
 
   public get x(): number {
-    return this._x;
+    return this._position.x;
   }
 
   public set x(value: number) {
-    this._x = value;
+    this._position.x = value;
   }
 
   public get y(): number {
-    return this._y;
+    return this._position.y;
   }
 
   public set y(value: number) {
-    this._y = value;
+    this._position.y = value;
+  }
+
+  public get width() {
+    return this._width;
+  }
+
+  public set width(value: number) {
+    this._width = value;
+  }
+
+  public get height() {
+    return this._height;
+  }
+
+  public set height(value: number) {
+    this._height = value;
   }
 
   public get name() {

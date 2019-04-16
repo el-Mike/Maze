@@ -1,4 +1,7 @@
-import { GameObject } from '../GameObject';
+import {
+  GameObject,
+  DisplayList,
+} from '@engine/GameObject';
 
 export enum GameState {
   INIT = 'INIT',
@@ -8,35 +11,27 @@ export enum GameState {
 }
 
 export class State {
-  private gameState: GameState;
-  private gameObjects: GameObject[];
+  private _gameState: GameState;
+  private _displayList: DisplayList;
 
   constructor() {
-    this.gameState = GameState.INIT;
-    this.gameObjects = [];
+    this._gameState = GameState.INIT;
+    this._displayList = new DisplayList();
   }
 
   public setState(state: GameState) {
-    this.gameState = state;
+    this._gameState = state;
   }
 
   public getState() {
-    return this.gameState;
+    return this._gameState;
   }
 
-  public update() {
-    this.gameObjects.forEach(object => object.update);
+  public get displayList() {
+    return this._displayList;
   }
 
-  public getGameObjects() {
-    return this.gameObjects;
-  }
-
-  public getUpdateable() {
-    return this.gameObjects.filter(object => object.updateable);
-  }
-
-  public addGameObjects(...objects: GameObject[]) {
-    this.gameObjects.push(...objects);
+  public set displayList(value: DisplayList) {
+    this._displayList = value;
   }
 }

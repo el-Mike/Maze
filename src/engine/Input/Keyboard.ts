@@ -14,8 +14,8 @@ interface pressedKeysMap {
 export class Keyboard {
   private pressedKeysMap: pressedKeysMap = {};
 
-  private onKeyDownFn: EventListenerOrEventListenerObject;
-  private onKeyUpFn: EventListenerOrEventListenerObject;
+  private onKeyDownFn: EventListener | EventListenerObject;
+  private onKeyUpFn: EventListener | EventListenerObject;
 
   constructor(
     private viewport: Viewport,

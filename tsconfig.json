@@ -7,6 +7,11 @@
     "target": "es5",
     "jsx": "react",
     "allowJs": true,
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "lib": ["es2015", "dom"],
+    "baseUrl": ".",
+    "paths": {
+      "@engine/*": ["src/engine/*"],
+    }
   }
 }

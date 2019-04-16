@@ -1,7 +1,7 @@
 import {
   Game,
   Group,
-  PhysicalObject,
+  RectangleObject,
 } from '../engine';
 
 import { Obstacle } from './Obstacle';
@@ -28,35 +28,37 @@ export class Maze {
       parentElement:  this.documentRef.getElementById(this.config.parentId) as HTMLElement,
       width: this.config.width,
       height: this.config.height,
-      backgroundColor: GAME_CONFIG.backgroundColor,
-      showFps: true,
+      rendererConfig: {
+        backgroundColor: GAME_CONFIG.backgroundColor,
+        showFps: true,
+        viewportWidth: this.config.width,
+        viewportHeight: this.config.height,
+      },
     });
   }
 
   public startGame() {
-    const state = this.game.getState();
-    const graphics = this.game.getGraphics();
     const keyboard = this.game.getKeyboard();
 
     const obstacles = [
-      new Obstacle(graphics, 300, 0, 10, 400, 'obstacle1'),
-      new Obstacle(graphics, 600, this.config.height - 400, 10, 400, 'obstacle2'),
+      new Obstacle(300, 0, 10, 400, 'obstacle1'),
+      new Obstacle(600, this.config.height - 400, 10, 400, 'obstacle2'),
     ];
 
     const obstaclesGroup = new Group('Obstacles');
 
-    const mazerObject = new PhysicalObject('mazer1');
+    const mazerObject = new RectangleObject('mazer1');
     mazerObject.setPosition(140, 50);
     
-    const mazer = new Mazer(graphics, keyboard, mazerObject);
-    mazerObject.setBody(mazer);
+    const mazer = new Mazer(keyboard, mazerObject);
 
     obstaclesGroup.add(...obstacles);
 
-    state.addGameObjects(
+    this.game.addGameObjects(
       obstaclesGroup,
-      mazerObject,
     );
+
+    this.game.addBodies(mazer);
 
     this.game.start();
   }

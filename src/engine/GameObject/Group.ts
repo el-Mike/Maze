@@ -1,3 +1,5 @@
+import { CanvasRenderer } from '@engine/Renderer';
+
 import { GameObject } from './GameObject';
 
 export class Group extends GameObject {
@@ -16,8 +18,8 @@ export class Group extends GameObject {
     this.objects.forEach(object => object.update());
   }
 
-  public render() {
-    this.objects.forEach(object => object.render());
+  public canvasRender(renderer: CanvasRenderer) {
+    this.objects.forEach(object => object.canvasRender(renderer));
   }
 
   get objects() {

@@ -1,24 +1,27 @@
 import {
   Rectangle,
   Vector2,
-  GameObject,
+  RectangleObject,
   Body,
-  Graphics,
   Keyboard,
 } from '../engine';
 
-export class Mazer extends Body {
+export class Mazer extends Body<RectangleObject> {
   private static DEFAULT_COLOR = 'rgb(115, 195, 183)';
 
   private static WIDTH = 10;
   private static HEIGHT = 10;
 
   constructor(
-    private graphics: Graphics,
     private keyboard: Keyboard,
-    gameObject: GameObject
+    gameObject: RectangleObject
   ) {
     super(gameObject);
+
+    this.gameObject.width = Mazer.WIDTH;
+    this.gameObject.height = Mazer.HEIGHT;
+    this.gameObject.color = Mazer.DEFAULT_COLOR;
+    this.gameObject.geom = new Rectangle(this.gameObject.x, this.gameObject.y, this.gameObject.width, this.gameObject.height);
   }
 
   update() {
@@ -39,12 +42,8 @@ export class Mazer extends Body {
     if (this.keyboard.pressed.down) {
       this.velocity.add(new Vector2(0, 3));
     }
-  }
 
-  render() {
-    const rect = new Rectangle(this.position.x, this.position.y, Mazer.WIDTH, Mazer.HEIGHT);
-
-    this.graphics.setFillColor(Mazer.DEFAULT_COLOR);
-    this.graphics.drawRect(rect);
+    this.updatePosition();
+    this.gameObject.geom = new Rectangle(this.gameObject.x, this.gameObject.y, this.gameObject.width, this.gameObject.height);
   }
 }

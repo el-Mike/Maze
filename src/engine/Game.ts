@@ -12,16 +12,24 @@ import { Viewport } from './Viewport';
 import { State } from './State';
 
 import {
-  Graphics,
-} from './Graphics';
-
-import {
   Keyboard
 } from './Input';
 
 import {
   Loop
 } from './Loop';
+
+import {
+  RendererFactory,
+  CanvasRenderer,
+} from './Renderer';
+
+import { GameObject } from './GameObject';
+
+import {
+  Body,
+  World,
+} from './Physics';
 
 export class Game {
   // DOM related properties
@@ -32,10 +40,13 @@ export class Game {
 
   private viewport: Viewport;
   private keyboard: Keyboard;
-  private graphics: Graphics;
   private state: State;
 
   private loop: Loop;
+
+  private renderer: CanvasRenderer;
+
+  private world: World;
 
   constructor(
     gameConfig: IGameConfig,
@@ -52,9 +63,12 @@ export class Game {
   private init() {
     this.viewport = new Viewport(this.config.width, this.config.height);
     this.keyboard = new Keyboard(this.viewport);
-    this.graphics = new Graphics(this.viewport);
     this.state = new State();
     this.loop = new Loop(this.config.fpsLimit);
+
+    this.world = new World();
+
+    this.renderer = RendererFactory.getCanvasRenderer(this.viewport, this.config.rendererConfig);
   
     this.gameContainer = isString(this.config.parentElement)
     ? this.documentRef.getElementById(this.config.parentElement) as HTMLElement
@@ -66,51 +80,44 @@ export class Game {
   }
 
   public start() {
-    this.loop.start(() => {
-      this.update();
-      this.renderFrame();
-    });
+    this.loop.start(() => this.step());
   }
 
   public stop() {
     this.loop.stop();
   }
 
+  private step() {
+    this.update();
+    this.render();
+  }
+
   private update() {
-    this.state.getUpdateable().forEach(object => object.update());
+    this.world.update();
+
+    this.state.displayList
+      .getAll()
+      .filter(object => object.updateable)
+      .forEach(object => object.update());
+
+    this.renderer.setDisplayList(this.state.displayList);
   }
 
-  private renderFrame() {
-    const context = this.viewport.getContext();
-    context.clearRect(0, 0, this.config.width, this.config.height);
-  
-    this.renderStage(context);
-    this.renderObjects(context);
-
-    if (this.config.showFps) {
-      context.fillStyle = 'rgb(0, 0, 0)';
-      context.font = "20px Arial";
-      context.fillText(`FPS: ${this.loop.getFps()}`, this.config.width - 150, 50);
-    }
+  private render() {
+    this.renderer.render(this.loop.getFps());
   }
 
-  private renderStage(context: CanvasRenderingContext2D) {
-    // rendering background
-    context.fillStyle = this.config.backgroundColor;
-    context.fillRect(0, 0, this.config.width, this.config.height);
+  public addGameObjects(...objects: GameObject[]) {
+    this.state.displayList.push(...objects);
   }
 
-  private renderObjects(context: CanvasRenderingContext2D) {
-    // rendering game objects
-    this.state.getGameObjects().forEach(object => object.render());
+  public addBodies(...bodies: Body<GameObject>[]) {
+    this.world.addBodies(...bodies);
+    this.addGameObjects(...bodies.map(body => body.gameObject));
   }
 
   public getState() {
     return this.state;
-  }
-
-  public getGraphics() {
-    return this.graphics;
   }
 
   public getKeyboard() {

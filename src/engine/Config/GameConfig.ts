@@ -1,12 +1,12 @@
+import { IRendererConfig } from '@engine/Renderer'; 
+
 export interface IGameConfig {
   parentElement: HTMLElement | string;
   width?: number;
   height?: number;
   fpsLimit?: number;
 
-  backgroundColor?: string;
-
-  showFps?: boolean;
+  rendererConfig: IRendererConfig;
 }
 
 export class GameConfig implements IGameConfig {
@@ -14,16 +14,19 @@ export class GameConfig implements IGameConfig {
   private _width: number;
   private _height: number;
   private _fpsLimit: number;
-  private _backgroundColor: string;
-  private _showFps: boolean;
+  private _rendererConfig: IRendererConfig;
 
   constructor(config: IGameConfig) {
     this._parentElement = config.parentElement;
     this.width = config.width || 800;
     this.height = config.height || 600;
     this.fpsLimit = config.fpsLimit || 60;
-    this.backgroundColor = config.backgroundColor || 'rgb(0, 0 ,0)';
-    this._showFps = Boolean(config.showFps);
+    this.rendererConfig = {
+      backgroundColor: config.rendererConfig.backgroundColor || 'rgb(0, 0 ,0)',
+      showFps: Boolean(config.rendererConfig.showFps),
+      viewportWidth: config.width || 800,
+      viewportHeight: config.height || 600
+    };
   }
 
   public get parentElement() {
@@ -58,19 +61,11 @@ export class GameConfig implements IGameConfig {
     this._fpsLimit = value;
   }
 
-  public get backgroundColor() {
-    return this._backgroundColor;
+  public get rendererConfig() {
+    return this._rendererConfig;
   }
 
-  public set backgroundColor(value: string) {
-    this._backgroundColor = value;
-  }
-
-  public get showFps() {
-    return this._showFps;
-  }
-
-  public set showFps(value: boolean) {
-    this._showFps = value;
+  public set rendererConfig(value: IRendererConfig) {
+    this._rendererConfig = value;
   }
 }
