@@ -1,19 +1,17 @@
+import { IGameConfig } from '@engine/Config';
 import { Viewport } from '@engine/Viewport';
 import { DisplayList } from '@engine/GameObject';
 
 import { RENDERER_CONTEXT_NOT_DEFINED } from './errors';
-import { IRendererConfig } from '../IRendererConfig';
 import { Renderer } from '../Renderer';
 
 
 export class CanvasRenderer extends Renderer {
   private context: CanvasRenderingContext2D;
 
-  private displayList: DisplayList; 
-
   constructor(
     viewport: Viewport,
-    config: IRendererConfig,
+    config: IGameConfig,
   ) {
     super(config);
 
@@ -24,36 +22,42 @@ export class CanvasRenderer extends Renderer {
     }
   }
 
-  public setDisplayList(list: DisplayList) {
-    this.displayList = list;
-  }
-
   public getContext() {
     return this.context;
   }
 
-  public render(fps?: number) {
+  public preRender() {
     const context = this.context;
-
     /**
      * cleaning the context
      */
-    context.clearRect(0, 0, this.config.viewportWidth, this.config.viewportHeight);
+    context.clearRect(0, 0, this.config.width, this.config.height);
 
     /**
      * Rendering background
      */
-    context.fillStyle = this.config.backgroundColor;
-    context.fillRect(0, 0, this.config.viewportWidth, this.config.viewportHeight);
 
-    this.displayList.each(gameObject => {
+    context.fillStyle = this.config.backgroundColor;
+    context.fillRect(0, 0, this.config.width, this.config.height);
+  }
+
+  public render(displayList: DisplayList) {
+    displayList.each(gameObject => {
       gameObject.canvasRender(this);
     });
+  }
 
-    if (this.config.showFps) {
-      context.fillStyle = 'rgb(0, 0, 0)';
-      context.font = "20px Arial";
-      context.fillText(`FPS: ${fps}`, this.config.viewportWidth - 150, 50);
-    }
+  /**
+   * @TODO: Remove when Text GameObject is available.
+   * 
+   * Temporary helper function to render FPS Counter
+   * @param fps 
+   */
+  public renderFpsCount(fps?: number) {
+    const context = this.context;
+
+    context.fillStyle = 'rgb(0, 0, 0)';
+    context.font = "20px Arial";
+    context.fillText(`FPS: ${fps}`, this.config.width - 150, 50);
   }
 }

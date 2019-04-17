@@ -1,32 +1,35 @@
-import { IRendererConfig } from '@engine/Renderer'; 
+import { RenderType } from '@engine/Renderer';
 
 export interface IGameConfig {
   parentElement: HTMLElement | string;
+
+  renderType?: RenderType;
+
   width?: number;
   height?: number;
   fpsLimit?: number;
 
-  rendererConfig: IRendererConfig;
+  backgroundColor?: string;
+  showFps?: boolean;
 }
 
 export class GameConfig implements IGameConfig {
   private _parentElement: HTMLElement | string;
+  private _renderType: RenderType;
   private _width: number;
   private _height: number;
   private _fpsLimit: number;
-  private _rendererConfig: IRendererConfig;
+  private _backgroundColor: string;
+  private _showFps: boolean;
 
   constructor(config: IGameConfig) {
     this._parentElement = config.parentElement;
+    this._renderType = config.renderType || RenderType.CANVAS;
     this.width = config.width || 800;
     this.height = config.height || 600;
     this.fpsLimit = config.fpsLimit || 60;
-    this.rendererConfig = {
-      backgroundColor: config.rendererConfig.backgroundColor || 'rgb(0, 0 ,0)',
-      showFps: Boolean(config.rendererConfig.showFps),
-      viewportWidth: config.width || 800,
-      viewportHeight: config.height || 600
-    };
+    this._backgroundColor = config.backgroundColor || 'rgb(0, 0 ,0)',
+    this._showFps = Boolean(config.showFps);
   }
 
   public get parentElement() {
@@ -35,6 +38,14 @@ export class GameConfig implements IGameConfig {
 
   public set canvasElement(value: HTMLElement | string) {
     this._parentElement = value;
+  }
+
+  public get renderType() {
+    return this._renderType;
+  }
+
+  public set renderType(value: RenderType) {
+    this._renderType = value;
   }
 
   public get width() {
@@ -61,11 +72,19 @@ export class GameConfig implements IGameConfig {
     this._fpsLimit = value;
   }
 
-  public get rendererConfig() {
-    return this._rendererConfig;
+  public get backgroundColor() {
+    return this._backgroundColor;
   }
 
-  public set rendererConfig(value: IRendererConfig) {
-    this._rendererConfig = value;
+  public set backgroundColor(value: string) {
+    this._backgroundColor = value;
+  }
+
+  public get showFps() {
+    return this._showFps;
+  }
+
+  public set showFps(value: boolean) {
+    this._showFps = value;
   }
 }

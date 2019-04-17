@@ -1,11 +1,11 @@
-import { isString } from './utils/typeGuards';
-
 import { PARENT_ELEMENT_NOT_DEFINED } from './errors';
 
 import {
   IGameConfig,
   GameConfig,
 } from './Config/GameConfig';
+
+import { DOMManager } from './DOM';
 
 import { Viewport } from './Viewport';
 
@@ -20,8 +20,8 @@ import {
 } from './Loop';
 
 import {
+  Renderer,
   RendererFactory,
-  CanvasRenderer,
 } from './Renderer';
 
 import { GameObject } from './GameObject';
@@ -32,25 +32,21 @@ import {
 } from './Physics';
 
 export class Game {
-  // DOM related properties
-  private gameContainer: HTMLElement;
-
-  // game properties
   private config: GameConfig = {} as GameConfig;
 
+  private domManager: DOMManager;
   private viewport: Viewport;
   private keyboard: Keyboard;
   private state: State;
 
   private loop: Loop;
 
-  private renderer: CanvasRenderer;
+  private renderer: Renderer;
 
   private world: World;
 
   constructor(
     gameConfig: IGameConfig,
-    private documentRef: HTMLDocument = document,
   ) {
     if (!gameConfig.parentElement) {
       throw new Error(PARENT_ELEMENT_NOT_DEFINED);
@@ -61,6 +57,8 @@ export class Game {
   }
 
   private init() {
+    this.domManager = DOMManager.getInstance();
+
     this.viewport = new Viewport(this.config.width, this.config.height);
     this.keyboard = new Keyboard(this.viewport);
     this.state = new State();
@@ -68,13 +66,9 @@ export class Game {
 
     this.world = new World();
 
-    this.renderer = RendererFactory.getCanvasRenderer(this.viewport, this.config.rendererConfig);
-  
-    this.gameContainer = isString(this.config.parentElement)
-    ? this.documentRef.getElementById(this.config.parentElement) as HTMLElement
-    : this.config.parentElement;
+    this.renderer = RendererFactory.getRenderer(this.viewport, this.config);
 
-    this.gameContainer.appendChild(this.viewport.getCanvas());
+    this.domManager.createGameContainer(this.config.parentElement, this.viewport.getCanvas());
 
     this.keyboard.enable();
   }
@@ -99,12 +93,16 @@ export class Game {
       .getAll()
       .filter(object => object.updateable)
       .forEach(object => object.update());
-
-    this.renderer.setDisplayList(this.state.displayList);
   }
 
   private render() {
-    this.renderer.render(this.loop.getFps());
+    this.renderer.preRender();
+
+    this.renderer.render(this.state.displayList);
+
+    if (this.config.showFps) {
+      this.renderer.renderFpsCount(this.loop.getFps());
+    }
   }
 
   public addGameObjects(...objects: GameObject[]) {

@@ -2,6 +2,7 @@ import {
   Game,
   Group,
   RectangleObject,
+  RenderType,
 } from '../engine';
 
 import { Obstacle } from './Obstacle';
@@ -26,14 +27,11 @@ export class Maze {
   ) {
     this.game = new Game({
       parentElement:  this.documentRef.getElementById(this.config.parentId) as HTMLElement,
+      renderType: RenderType.CANVAS,
       width: this.config.width,
       height: this.config.height,
-      rendererConfig: {
-        backgroundColor: GAME_CONFIG.backgroundColor,
-        showFps: true,
-        viewportWidth: this.config.width,
-        viewportHeight: this.config.height,
-      },
+      backgroundColor: GAME_CONFIG.backgroundColor,
+      showFps: true,
     });
   }
 
