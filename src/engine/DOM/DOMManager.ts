@@ -6,26 +6,18 @@ export class DOMManager {
  */
   private static _instance: DOMManager;
 
-  private _gameContainer: HTMLElement;
-
   private constructor(private documentRef: HTMLDocument = document) {}
 
   public static getInstance(documentRef: HTMLDocument = document) {
     return this._instance || (this._instance = new this(documentRef));
   }
 
-  public createGameContainer(parent: HTMLElement | string, canvas: HTMLCanvasElement) {
-    parent = parent || this.documentRef.createElement('div');
+  public createElement<T extends HTMLElement = HTMLElement>(tag: string) {
+    return this.documentRef.createElement(tag) as T;
+  }
 
-    const container = isString(parent)
-      ? this.documentRef.getElementById(parent)
-      : parent;
-
-    this._gameContainer = container;
-
-    this.addToDOM(canvas, this._gameContainer);
-
-    return this._gameContainer;
+  public getElementById<T extends HTMLElement = HTMLElement>(id: string) {
+    return this.documentRef.getElementById(id) as T;
   }
 
   public addToDOM(element: HTMLElement | string, parent: HTMLElement | string = null) {

@@ -5,8 +5,6 @@ import {
   GameConfig,
 } from './Config/GameConfig';
 
-import { DOMManager } from './DOM';
-
 import { Viewport } from './Viewport';
 
 import { State } from './State';
@@ -34,7 +32,6 @@ import {
 export class Game {
   private config: GameConfig = {} as GameConfig;
 
-  private domManager: DOMManager;
   private viewport: Viewport;
   private keyboard: Keyboard;
   private state: State;
@@ -57,18 +54,14 @@ export class Game {
   }
 
   private init() {
-    this.domManager = DOMManager.getInstance();
-
-    this.viewport = new Viewport(this.config.width, this.config.height);
+    this.viewport = new Viewport(this.config.width, this.config.height, this.config.parentElement);
     this.keyboard = new Keyboard(this.viewport);
     this.state = new State();
     this.loop = new Loop(this.config.fpsLimit);
 
     this.world = new World();
-
+    
     this.renderer = RendererFactory.getRenderer(this.viewport, this.config);
-
-    this.domManager.createGameContainer(this.config.parentElement, this.viewport.getCanvas());
 
     this.keyboard.enable();
   }

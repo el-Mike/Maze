@@ -1,18 +1,29 @@
+import { isString } from '@engine/utils';
+
+import { DOMManager } from '@engine/DOM';
+
 export class Viewport {
+  private domManager: DOMManager;
+
   private _width: number;
   private _height: number;
+  private gameContainer: HTMLElement;
   private canvas: HTMLCanvasElement;
   private context: CanvasRenderingContext2D;
 
   constructor(
     width: number,
     height: number,
-    documentRef: Document = document
+    parentElement: HTMLElement | string,
   ) {
+    this.domManager = DOMManager.getInstance();
+
     this._width = width || 800;
     this._height = height || 600;
 
-    const canvas = documentRef.createElement('canvas') as HTMLCanvasElement;
+    const canvas = this.domManager.createElement<HTMLCanvasElement>('canvas');
+    this.gameContainer = this.createGameContainer(parentElement, canvas);
+
     const context = canvas.getContext('2d');
 
     const ratio = this.getPixelRatio(context);
@@ -27,14 +38,6 @@ export class Viewport {
 
     this.context = context;
     this.canvas = canvas;
-  }
-
-  public getCanvas() {
-    return this.canvas;
-  }
-
-  public getContext() {
-    return this.context;
   }
 
   private getPixelRatio(context: CanvasRenderingContext2D, windowRef: Window = window) {
@@ -57,11 +60,34 @@ export class Viewport {
     return deviceRatio / resultRatio;
   }
 
+  private createGameContainer(parent: HTMLElement | string, canvas: HTMLCanvasElement) {
+    parent = parent || this.domManager.createElement('div');
+
+    const container = isString(parent)
+      ? this.domManager.getElementById(parent)
+      : parent;
+
+      this.domManager.addToDOM(canvas, container);
+      return container;
+  }
+
   get width() {
     return this._width;
   }
 
   get height() {
     return this._height;
+  }
+
+  public getCanvas() {
+    return this.canvas;
+  }
+
+  public getContext() {
+    return this.context;
+  }
+
+  public getGameContainer() {
+    return this.gameContainer;
   }
 }
